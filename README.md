@@ -2,32 +2,36 @@
   <img src="images/fulllogo_transparent_nobuffer.png" alt="Quanta Labs" width="280"/>
 </p>
 
-# Unseen Reasoning Eval Puzzles
+# Held-Out Reasoning Eval Puzzles
 
-Private reasoning evaluation puzzles for AI models. Multi-step, rule-based grid tasks. Unseen by any model.
+Fresh reasoning evaluation puzzles in ARC-AGI format. Human-designed, human-verified, never published anywhere. If your model scores well on these, it earned it.
 
-## Why
+## Why this exists
 
-Public benchmarks leak into training data. Models overfit to them. ARC-AGI's 2025 report covers this in detail ([Chollet et al., 2025](https://arxiv.org/abs/2601.10904)). [ARC Prize 2026](https://arcprize.org/competitions/2026) responds with ARC-AGI-3, where the best AI scores 12.58% against a 100% human baseline.
+Public benchmarks are leaking into training data — and it's already affecting scores. The ARC Prize 2025 technical report found that frontier models use [correct ARC color mappings in their reasoning without being told the format](https://arxiv.org/abs/2601.10904), which strongly suggests ARC data lives in their weights. ARC-AGI-1 is effectively saturated at 93%+. Even ARC-AGI-2 shows signs of knowledge-dependent overfitting.
 
-These puzzles are held out. They do not exist in any public dataset. Every puzzle is crafted by human experts with verified solutions.
+[ARC Prize 2026](https://arcprize.org/competitions/2026) responds with ARC-AGI-3, an entirely new interactive format where the best AI currently hits 12.58% against a 100% human baseline. That's the state of things.
 
-## What's here
+**These puzzles are held out.** They don't exist in any public dataset, any crawl, or any training corpus. Every task is designed from scratch by human experts and independently verified before release. No LLM was involved in creating them.
 
-One puzzle, one viewer.
+## What's in this repo
 
-- `puzzles/signal_propagation.json` — spatial logic, 6 rules, 6 training pairs, 1 test pair, grids from 12x12 to 20x20
-- `viewer/arc_puzzle_viewer.html` — browser-based, works with any puzzle JSON in this format
+One sample puzzle and a drop-in browser viewer.
 
-## Signal Propagation with Arithmetic Gates
+- `puzzles/signal_propagation.json` — spatial logic, 6 rules, 6 training pairs, 1 test pair, grids from 12×12 to 20×20
+- `viewer/arc_puzzle_viewer.html` — open in any browser, load any ARC-format JSON to visualize input/output pairs
+
+Standard ARC-AGI format. Grids are N×M integer matrices (0–9). Compatible with existing ARC tooling out of the box.
+
+## Sample: Signal Propagation with Arithmetic Gates
 
 ![Train pair 1](images/train_pair_1.png)
 ![Train pair 2](images/train_pair_2.png)
 ![Train pair 3](images/train_pair_3.png)
 
-Four emitter types fire beams in fixed directions (blue=up, red=right, green=down, yellow=left). Orange gates deflect beams 90° clockwise. Collisions between beam colors produce magenta (2 colors) or azure (3+). Emitters with no surviving trail cells are marked dead.
+Four emitter types fire beams in fixed directions (blue → up, red → right, green → down, yellow → left). Orange gates deflect beams 90° clockwise. When beams of different colors collide, they mix — magenta for 2 colors, azure for 3+. Emitters whose trail cells are fully overwritten get marked dead.
 
-Full rules and color map are in the JSON.
+The puzzle requires applying all 6 rules in sequence across grids of increasing size. Full rule spec and color map are in the JSON.
 
 ## Format
 
@@ -38,8 +42,8 @@ Full rules and color map are in the JSON.
   "difficulty": "medium",
   "rules": {
     "description": "...",
-    "elements": { "0": "empty", "1": "blue — emitter, fires UP", ... },
-    "steps": [ "Rule 1 — Fire: ...", "Rule 2 — Propagation: ...", ... ],
+    "elements": { "0": "empty", "1": "blue — emitter, fires UP", "..." : "..." },
+    "steps": [ "Rule 1 — Fire: ...", "Rule 2 — Propagation: ...", "..." ],
     "notes": [ "..." ]
   },
   "train": [
@@ -49,19 +53,40 @@ Full rules and color map are in the JSON.
     { "input": [[...]], "output": [[...]] }
   ],
   "coverage": {
-    "features_exercised": ["all_4_beam_directions", "gate_deflection", ...]
+    "features_exercised": ["all_4_beam_directions", "gate_deflection", "..."]
   }
 }
 ```
 
-Grids are NxN integer matrices (0-9). Compatible with ARC-AGI tooling.
+The `rules` and `coverage` fields are our additions to the standard ARC format — they document exactly what reasoning each puzzle tests and what each training pair covers. Strip them if you want vanilla ARC compatibility.
+
+## How we build these
+
+Each puzzle goes through a simple pipeline: a human expert designs the rule system and grids from scratch, a separate person solves it without seeing the intended answer to confirm it's unambiguous, and we validate that training pairs cover the full rule set. No generation shortcuts, no LLM assistance. That's what makes held-out data actually held-out.
 
 ## More puzzles
 
-We maintain additional puzzle families covering spatial logic, constraint propagation, and multi-step transformation tasks. Custom evaluation sets available on request.
+This is a sample from a larger library. We build evaluation tasks across several families:
 
-**tag@quanta-labs.ai** | [quanta-labs.ai](https://quanta-labs.ai)
+- **Spatial logic** — directional mechanics, region filling, collision systems
+- **Constraint propagation** — iterative inference across grid cells
+- **Multi-step transformations** — sequential rule application, state machines
+- **Pattern completion** — abstract visual pattern extension
+
+Different difficulties, different grid sizes, custom volumes. We also build multilingual reasoning tasks across 25+ European languages for teams evaluating beyond English.
+
+Custom eval sets available on request.
+
+## License
+
+CC BY-NC 4.0. Free for research and evaluation with attribution. Don't include these in training data — that's the whole point.
+
+## Contact
+
+**tag@quanta-labs.ai** · [quanta-labs.ai](https://quanta-labs.ai)
+
+Ran your model on these? We'd love to hear how it did.
 
 ---
 
-<p align="center">Built by <a href="https://quanta-labs.ai">Quanta Labs</a> &middot; Munich, Germany</p>
+<p align="center">Built by <a href="https://quanta-labs.ai">Quanta Labs</a> · Munich, Germany</p>
