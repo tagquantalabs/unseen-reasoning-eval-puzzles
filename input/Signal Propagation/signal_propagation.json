@@ -1,9 +1,4 @@
 {
-  "id": "ql-signal-propagation-001",
-  "type": "spatial_logic",
-  "difficulty": "medium",
-  "created_at": "2026-03-04",
-
   "train":
   [
     {
@@ -278,50 +273,5 @@
         [4, 4, 4, 4, 4, 4, 0, 5, 1, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 5]
       ]
     }
-  ],
-
-  "rules": {
-    "description": "Signal Propagation with Arithmetic Gates",
-    "elements": {
-        "0": "empty",
-        "1": "blue — emitter, fires UP",
-        "2": "red — emitter, fires RIGHT",
-        "3": "green — emitter, fires DOWN",
-        "4": "yellow — emitter, fires LEFT",
-        "5": "grey — wall (blocks beams)",
-        "7": "orange — gate (deflects beams 90° clockwise)",
-        "6": "magenta — 2-color collision (output only)",
-        "8": "azure — 3+-color collision (output only)",
-        "9": "maroon — dead emitter (output only)"
-    },
-    "steps": [
-        "Rule 1 — Fire: Every emitter fires a beam in the direction determined by its color. Blue fires up, red fires right, green fires down, yellow fires left. All beams fire simultaneously.",
-        "Rule 2 — Propagation: A beam travels cell by cell from the emitter. The emitter cell itself is not part of the beam trail. A beam travels through empty (black) cells. A beam stops before the grid boundary, a wall (grey), or any emitter (regardless of that emitter's color). The beam does not enter the blocking cell. Beams do not block or interact with other beams during propagation. All beams are traced to full completion before any marking or collision is resolved.",
-        "Rule 3 — Gate deflection: When a beam reaches a gate (orange) cell, the beam enters the gate cell but does not mark it. The gate stays orange in the output. The beam's direction rotates 90° clockwise (up → right, right → down, down → left, left → up) and continues from the next cell in the new direction. A beam can pass through multiple gates. Each beam tracks its own visited gates independently. If a beam would enter a gate cell it has already passed through, it stops before that gate.",
-        "Rule 4 — Marking: Each empty cell reached by exactly one beam takes the color of that beam's emitter.",
-        "Rule 5 — Collision: If an empty cell is reached by beams from exactly 2 distinct emitter colors, it becomes magenta (6). If reached by beams from 3 or more distinct emitter colors, it becomes azure (8). Collision counting is based on distinct colors, not distinct emitters.",
-        "Rule 6 — Dead emitter: After all marking and collisions are fully resolved, check each emitter: count how many cells in the output carry that emitter's color as a result of its beam. If the count is zero, replace the emitter with maroon (9). A dead emitter's beam still counts toward collisions."
-    ],
-    "notes": [
-        "Multiple emitters of the same color may exist. Collision counting is based on distinct colors, not distinct emitters.",
-        "Processing order: (1) Trace all beams simultaneously, (2) Mark trail cells and resolve collisions, (3) Replace dead emitters.",
-        "Walls stay grey. Gates stay orange. Living emitters keep their color. Unreached empty cells stay black."
-    ]
-},
-
-  "coverage": {
-    "train_summary": "6 train (12×12, 14×14, 12×14, 16×16, 14×16, 18×18) + 1 test (20×20)",
-    "features_exercised": [
-        "all_4_beam_directions",
-        "beam_stopped_by_wall",
-        "beam_stopped_by_emitter",
-        "beam_stopped_by_boundary",
-        "single_gate_deflection",
-        "chained_multi_gate_deflection",
-        "magenta_2color_collision",
-        "azure_3color_collision",
-        "dead_emitter_maroon",
-        "same_color_emitters_no_self_collision"
-    ]
-}
+  ]
 }
